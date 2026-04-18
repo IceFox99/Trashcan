@@ -142,8 +142,14 @@ NOTES:
  *   Max ops: 14
  *   Rating: 1
  */
+// @DONE
 int bitXor(int x, int y) {
-  return 2;
+  // ~x & y ===> 0 (00 or 11)
+  // x ^ y = (~x & y) | (x & ~y)
+  // how to represent | with ~ and &:
+  // x | y = ~(~x & ~y)
+  // x ^ y = ~(~(~x & y) & ~(x & ~y))
+  return ~(~(~x & y) & ~(x & ~y));
 }
 /* 
  * tmin - return minimum two's complement integer 
@@ -151,9 +157,9 @@ int bitXor(int x, int y) {
  *   Max ops: 4
  *   Rating: 1
  */
+// @DONE
 int tmin(void) {
-
-  return 2;
+  return 1 << 31;
 
 }
 //2
@@ -164,8 +170,9 @@ int tmin(void) {
  *   Max ops: 10
  *   Rating: 1
  */
+// @DONE
 int isTmax(int x) {
-  return 2;
+  return !(x ^ (~(1 << 31)));
 }
 /* 
  * allOddBits - return 1 if all odd-numbered bits in word set to 1
@@ -175,8 +182,11 @@ int isTmax(int x) {
  *   Max ops: 12
  *   Rating: 2
  */
+// @DONE
 int allOddBits(int x) {
-  return 2;
+  //return x ? (x >> 1);
+  int base = 0xAA + (0xAA << 8) + (0xAA << 16) + (0xAA << 24);
+  return !((x & base) ^ base);
 }
 /* 
  * negate - return -x 
@@ -185,8 +195,9 @@ int allOddBits(int x) {
  *   Max ops: 5
  *   Rating: 2
  */
+// @DONE
 int negate(int x) {
-  return 2;
+  return ~x + 1;
 }
 //3
 /* 
@@ -198,8 +209,13 @@ int negate(int x) {
  *   Max ops: 15
  *   Rating: 3
  */
+// @DONE
 int isAsciiDigit(int x) {
-  return 2;
+  // my solution: return !(!!((x >> 4) ^ 3) + ((~(x & 15) + 10) & (1 << 31)));
+  // optimal one:
+  int a = x + ~0x2F;
+  int b = ~x + 0x3A;
+  return !((a | b) >> 31);
 }
 /* 
  * conditional - same as x ? y : z 
@@ -208,8 +224,10 @@ int isAsciiDigit(int x) {
  *   Max ops: 16
  *   Rating: 3
  */
+// @DONE
 int conditional(int x, int y, int z) {
-  return 2;
+  int c = ~(!!x) + 1;
+  return (c & y) + (~c & z);
 }
 /* 
  * isLessOrEqual - if x <= y  then return 1, else return 0 
@@ -218,8 +236,10 @@ int conditional(int x, int y, int z) {
  *   Max ops: 24
  *   Rating: 3
  */
+// @DONE
 int isLessOrEqual(int x, int y) {
-  return 2;
+  //return 2;
+  return !(((~x) + 1 + y) >> 31);
 }
 //4
 /* 
@@ -230,8 +250,10 @@ int isLessOrEqual(int x, int y) {
  *   Max ops: 12
  *   Rating: 4 
  */
+// @TODO
 int logicalNeg(int x) {
-  return 2;
+  int y = (x << 1) + (x >> 31);
+  return ((~y + 1) ^ y + 2) >> 1;
 }
 /* howManyBits - return the minimum number of bits required to represent x in
  *             two's complement
